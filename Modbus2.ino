@@ -8,6 +8,7 @@
 #include <ArduinoModbus.h>
 #include "arduino_secrets.h" 
 
+long count,value,value2,val;
 float floatValue;
 char charArray[4];
 char ssid[] = SECRET_SSID;        // your network SSID (name)
@@ -72,33 +73,59 @@ void loop() {
   } else {
     // client connected
     // write the value of 0x01, to the coil at address 0x00
-    for (int i = 0; i < 100; ++i) {
-  
-      if (globalArray[i].Format == 64) {
-        long read = modbusTCPClient.requestFrom(71,HOLDING_REGISTERS,globalArray[i].Adresse,globalArray[i].N1 );
+    for (int i = 0; i < 106; ++i) {
+          long read = modbusTCPClient.requestFrom(71,HOLDING_REGISTERS,globalArray[i].Adresse,globalArray[i].N1 );
         if (read == -1) {
           Serial.print("Failed to requestFrom! ");
           Serial.println(modbusTCPClient.lastError());
         //Serial.println(read);
         }
         else{
-          long count = modbusTCPClient.available();
-          long value = modbusTCPClient.read();
-          long value2 = modbusTCPClient.read();
+          count = modbusTCPClient.available();
+          value = modbusTCPClient.read();
+          if (count >1)
+            value2 = modbusTCPClient.read();
           // char Array mit Werten aus dem Modbus für float-Werte
           charArray[1] = (value >> 8) & 0xFF;  // Das höchstwertige Byte
           charArray[0] = (value >> 0) & 0xFF;
           charArray[3] = (value2 >> 8) & 0xFF;
           charArray[2] = value2 & 0xFF;  // Das niederwertige Byte
           //--char-Array in float konvertieren
-          memcpy(&floatValue, &charArray, sizeof(charArray)); //copy 4 bytes in buf into data variable);
-          Serial.print( globalArray[i].Description);
-          Serial.print(floatValue);
-          Serial.println( globalArray[i].Unit);
+          
+          
+          if (globalArray[i].Format == 64) {
+            memcpy(&floatValue, &charArray, sizeof(charArray)); //copy 4 bytes in buf into data variable);
+            globalArray[i].fval=floatValue;
+          }
+          else if (globalArray[i].Format == 16 && count ==1) {
+            //Serial.print( globalArray[i].Description);
+            //Serial.print(value);
+            //Serial.println( globalArray[i].Unit);
+            //globalArray[i].ival=value;
+          }
+          else if (globalArray[i].Format == 16 && count ==2) {
+            charArray[1] = (value >> 8) & 0xFF;  // Das höchstwertige Byte
+            charArray[0] = (value >> 0) & 0xFF;
+            charArray[3] = (value2 >> 8) & 0xFF;
+            charArray[2] = value2 & 0xFF;  // Das niederwertige Byte
+            memcpy(&val, &charArray, sizeof(charArray)); //copy 4 bytes in buf into data variable);
+            Serial.print( globalArray[i].Description);
+            Serial.println(val);
+            Serial.print(value);
+            
+            Serial.print("+++");
+            Serial.println(value2);
+            Serial.print(charArray[1],HEX);
+            Serial.print(charArray[0],HEX);
+            Serial.print(charArray[3],HEX);
+            Serial.print(charArray[2],HEX);
+            Serial.println( globalArray[i].Unit);
+          }
+          
         }
-      }
+      
     }
-  delay(5000);
+  delay(30000);
   
 
   }  
