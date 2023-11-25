@@ -1,21 +1,11 @@
-#include <SPI.h>
-#include <WiFi.h>
-#include <stdint.h>
-#include "array.h"
-// #include <WiFi101.h> // for MKR1000
 
-#include <ArduinoRS485.h> // ArduinoModbus depends on the ArduinoRS485 library
-#include <ArduinoModbus.h>
-#include "arduino_secrets.h" 
 
-long count,value,value2,val;
-float floatValue;
-char charArray[4];
-char ssid[] = SECRET_SSID;        // your network SSID (name)
-char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
-int keyIndex = 0; 
-int status = WL_IDLE_STATUS;  
-char server[] = "example.com";       // host name for example.com (using DNS)    
+
+//********************** Projekt-Includes ******************************
+
+#define  MAIN
+#include "kostal.h"
+/* Dies ist das MAIN */
 WiFiClient client; 
 ModbusTCPClient modbusTCPClient(client);
 IPAddress Modbusserver(192, 168, 0, 87); // update with the IP Address of your Modbus server
@@ -61,6 +51,7 @@ void loop() {
     char c = client.read();
     Serial.write(c);
   }
+  int ret=kostalread();
   // put your main code here, to run repeatedly:
   if (!modbusTCPClient.connected()) {
     // client not connected, start the Modbus TCP client

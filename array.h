@@ -1,3 +1,5 @@
+
+/*------------------- Mehrfach Defines verhindern ----------------------------*/
 #ifndef ARRAY_H_
 #define ARRAY_H_
 #define MAX_STRING_LEN 50
