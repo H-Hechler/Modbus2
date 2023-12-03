@@ -1,8 +1,4 @@
-
-
-
 //********************** Projekt-Includes ******************************
-
 #define  MAIN
 #include "kostal.h"
 /* Dies ist das MAIN */
@@ -51,7 +47,7 @@ void loop() {
     char c = client.read();
     Serial.write(c);
   }
-  int ret=kostalread();
+
   // put your main code here, to run repeatedly:
   if (!modbusTCPClient.connected()) {
     // client not connected, start the Modbus TCP client
@@ -64,6 +60,7 @@ void loop() {
   } else {
     // client connected
     // write the value of 0x01, to the coil at address 0x00
+    int ret=kostalread();
     for (int i = 0; i < 106; ++i) {
           long read = modbusTCPClient.requestFrom(71,HOLDING_REGISTERS,globalArray[i].Adresse,globalArray[i].N1 );
         if (read == -1) {
@@ -87,12 +84,16 @@ void loop() {
           if (globalArray[i].Format == 64) {
             memcpy(&floatValue, &charArray, sizeof(charArray)); //copy 4 bytes in buf into data variable);
             globalArray[i].fval=floatValue;
+            Serial.print( globalArray[i].Description);
+            Serial.print(globalArray[i].fval=floatValue);
+            Serial.println( globalArray[i].Unit);
+
           }
           else if (globalArray[i].Format == 16 && count ==1) {
-            //Serial.print( globalArray[i].Description);
-            //Serial.print(value);
-            //Serial.println( globalArray[i].Unit);
-            //globalArray[i].ival=value;
+            Serial.print( globalArray[i].Description);
+            Serial.print(value);
+            Serial.println( globalArray[i].Unit);
+            globalArray[i].ival=value;
           }
           else if (globalArray[i].Format == 16 && count ==2) {
             charArray[1] = (value >> 8) & 0xFF;  // Das höchstwertige Byte
@@ -116,6 +117,7 @@ void loop() {
         }
       
     }
+
   delay(30000);
   
 
