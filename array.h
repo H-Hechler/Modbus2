@@ -10,8 +10,10 @@ struct KostalStruct {
     char Unit [9]; // Array für eine Zeichenkette mit maximal 8 Zeichen (+1 für das Nullzeichen)
     int Format; //64=float, 16=int,16 & N1=2 =long
     int N1;
+    int enabel;
     float fval;
     long ival;
+ 
 
 };
 extern KostalStruct globalArray[107];
