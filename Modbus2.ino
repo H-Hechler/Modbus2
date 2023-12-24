@@ -16,6 +16,7 @@ char wserver[] = "example.com";  // host name for example.com (using DNS)
 ModbusTCPClient modbusTCPClient(client);
 IPAddress Modbusserver(192, 168, 0, 87);  // update with the IP Address of your Modbus server
 
+
 void setup() {
 
   //Initialize serial and wait for port to open:
@@ -55,6 +56,11 @@ void setup() {
     client.println();
   }
   server.begin();  //Webserver
+    // Accurate time is necessary for certificate validation and writing in batches
+    // We use the NTP servers in your area as provided by: https://www.pool.ntp.org/zone/
+    // Syncing progress and the time will be printed to Serial.
+    //timeSync(TZ_INFO, "pool.ntp.org", "time.nis.gov");
+  
 }
 void loop() {
   while (client.available()) {
@@ -104,6 +110,12 @@ void loop() {
           memcpy(&val, &charArray, sizeof(charArray));  //copy 4 bytes in buf into data variable);
           globalArray[i].ival = val;
         }
+        if (globalArray[i].Adresse == 56 || globalArray[i].Adresse == 202|| globalArray[i].Adresse == 104) {
+          Serial.print("Adresse == 56");
+          Serial.println(val);
+          strcpy(globalArray[i].State, kostalState(56, val));
+          Serial.println(globalArray[i].State);
+        }
       }
     }
     int ret = kostalread();
@@ -126,7 +138,7 @@ void loop() {
           wclient.println("HTTP/1.1 200 OK");
           wclient.println("Content-Type: text/html");
           wclient.println("Connection: close");  // the connection will be closed after completion of the response
-          wclient.println("Refresh: 10");         // refresh the page automatically every 5 sec
+          wclient.println("Refresh: 10");        // refresh the page automatically every 5 sec
           wclient.println();
           wclient.println("<!DOCTYPE HTML>");
           wclient.println("<html>");
@@ -141,9 +153,16 @@ void loop() {
               wclient.print(globalArray[k].Description);
               wclient.print("</td>");
               wclient.print("<td>");
-              if (globalArray[k].Format == 64)
+              if (globalArray[k].Format == 64) {
                 wclient.print(globalArray[k].fval);
-              else wclient.print(globalArray[k].ival);
+              } else {
+                if (globalArray[k].Adresse == 56 || globalArray[k].Adresse == 202|| globalArray[k].Adresse == 104) {
+                  wclient.print(globalArray[k].State);
+                  Serial.print("-----------------------------------------------");
+                  Serial.println(globalArray[k].State);
+                } else
+                  wclient.print(globalArray[k].ival);
+              }
               wclient.print("</td>");
               wclient.print("<td>");
               wclient.print(globalArray[k].Unit);
@@ -151,7 +170,6 @@ void loop() {
               // wclient.println("<br />");
               wclient.print("</tr>");
             }
-            
           }
           wclient.print("</table>");
           wclient.println("</html>");

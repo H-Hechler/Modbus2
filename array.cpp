@@ -40,7 +40,7 @@ KostalStruct globalArray[107] =
 {190,"Battery charge current ","A ",64,2,0},
 {194,"Number of battery cycles ","- ",64,2,0},
 {200,"Actual battery charge (-) / discharge (+) current ","A ",64,2,0},
-{202,"PSSB fuse state ","- ",64,2,0},
+{202,"PSSB fuse state ","- ",64,2,1},
 {208,"Battery ready flag ","- ",64,2,0},
 {210,"Act. state of charge ","% ",64,2,0},
 {214,"Battery temperature ","°C ",64,2,0},

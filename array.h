@@ -13,6 +13,7 @@ struct KostalStruct {
     int enabel;
     float fval;
     long ival;
+    char State [MAX_STRING_LEN + 1]; ; 
  
 
 };
