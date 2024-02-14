@@ -1,0 +1,7 @@
+{
+    "configuration": "target_core=cm7,split=100_0",
+    "board": "arduino:mbed_giga:giga",
+    "port": "COM6",
+    "sketch": "Modbus2.ino",
+    "output": "../build"
+}

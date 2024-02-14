@@ -22,7 +22,6 @@ int kostalread() {
     // Serial.print(charArray[2],HEX);
   }*/
 
-
   pinMode(ledPin, OUTPUT);
   if (ledState == LOW) {
     ledState = HIGH;
@@ -223,4 +222,10 @@ char* kostalState(int Adress, long val) {
 
   return retVal;
   //State of energy manager3
+}
+
+void sqlinsert(){
+  strcpy(INSERTSQL, "INSERT INTO kostal.test (message) VALUES ('Hello, Arduino!')");
+  
+
 }
