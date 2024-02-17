@@ -3,14 +3,16 @@
 #define KOSTAL_H_
 
 #ifdef MAIN
-#define EXTERN
+#define EXTERN 
 #else
 #define EXTERN extern
 #endif
 
 
-
+#define TZ_INFO "CET-1CEST,M3.5.0,M10.5.0/3"
 #define MAX_STRING_LEN 50
+#include <iostream>
+#include <string>
 #include <SPI.h>
 #include <stdint.h>
 #include <WiFi.h>
@@ -20,7 +22,9 @@
 #include "array.h"
 #include <MySQL_Connection.h>
 #include <MySQL_Cursor.h>
-//#include <Ethernet.h>
+#include <WiFiUdp.h>
+#include <mbed_mktime.h>
+#include <String.h>
 
 
 // Time zone info
@@ -30,6 +34,7 @@
 
 
 extern WiFiClient client;
+extern WiFiUDP Udp;
 extern long count, value, value2, val;
 extern float floatValue;
 extern char charArray[4];
@@ -38,11 +43,22 @@ extern char pass[];  // your network password (use for WPA, or use as key for WE
 extern int keyIndex;
 extern int status;
 extern char wserver[];  // host name for example.com (using DNS)
-extern char INSERTSQL[200] ;
-/*------------------- Kostal read------------------------------*/
+extern char INSERTSQL[500] ;
+
+/* extern unsigned int localPort = 2390; // local port to listen for UDP packets
+// IPAddress timeServer(162, 159, 200, 123); // pool.ntp.org NTP server
+extern constexpr auto timeServer { "pool.ntp.org" };
+extern const int NTP_PACKET_SIZE = 48; // NTP timestamp is in the first 48 bytes of the message
+extern byte packetBuffer[NTP_PACKET_SIZE]; // buffer to hold incoming and outgoing packets
+ *//*------------------- Kostal read------------------------------*/
 
 
 int kostalread();
 char* kostalState(int Adress, long val);
 void sqlinsert();
+void setNtpTime();
+void releaseNTP();
+unsigned long sendNTPpacket(const char *address);
+unsigned long parseNtpPacket();
+String getLocaltime();
 #endif

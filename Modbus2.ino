@@ -30,10 +30,10 @@ void setup()
 
   // Initialize serial and wait for port to open:
   Serial.begin(9600);
-  //while (!Serial)
-  //{
-    //; // wait for serial port to connect. Needed for native USB port only
-  //}
+  while (!Serial)
+  {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_SHIELD)
   {
@@ -250,32 +250,35 @@ void loop()
   else
     Serial.println("NO wclient");
   // Initiate the query class instance
-  MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+
   // Execute the query
   bool status;
   status = conn.connected();
   if (status == TRUE)
   {
-    Serial.println("MySQL_Cursor connected?: ");
+    Serial.println("MySQL_Cursor connected: ");
+    MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+    sqlinsert();
+    cur_mem->execute(INSERTSQL);
+    delete cur_mem;
   }
   else
   {
+    conn.close();
+
+    delay(1000);
     if (conn.connect(server_addr, 49155, user, password))
     {
-    //client.connect(wserver, 80);
+      
       Serial.println("Connection reconecting to mysql.");
-    
+
       // You would add your code here to run a query once on startup.
     }
   }
-  sqlinsert();
-  cur_mem->execute(INSERTSQL);
-  // Note: since there are no results, we do not need to read any data
-  // Deleting the cursor also frees up memory used
-  delete cur_mem;
+
   // timeClient.update();
   // Serial.println(timeClient.getFormattedTime());
-  delay(60000);
+  delay(6000);
 }
 
 //-------
