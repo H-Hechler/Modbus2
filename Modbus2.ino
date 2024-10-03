@@ -33,10 +33,10 @@ void setup()
   highPin3();
   // Initialize serial and wait for port to open:
   Serial.begin(9600);
-  //while (!Serial)
-  //{
-  //  ; // wait for serial port to connect. Needed for native USB port only
-  //}
+  while (!Serial)
+  {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_SHIELD)
   {
