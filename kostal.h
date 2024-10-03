@@ -27,13 +27,17 @@
 #include <String.h>
 
 
+
 // Time zone info
 #define TZ_INFO "UTC1"
+#define MAX_FAILED_CONNECTS 20
 // Declare InfluxDB client instance with preconfigured InfluxCloud certificate
 
 
 
 extern WiFiClient client;
+extern WiFiClient client1;
+extern WiFiServer server;
 extern WiFiUDP Udp;
 extern long count, value, value2, val;
 extern float floatValue;
@@ -43,7 +47,10 @@ extern char pass[];  // your network password (use for WPA, or use as key for WE
 extern int keyIndex;
 extern int status;
 extern char wserver[];  // host name for example.com (using DNS)
-extern char INSERTSQL[500] ;
+EXTERN char INSERTSQL[500] ;
+EXTERN int countSQL;
+
+
 
 /* extern unsigned int localPort = 2390; // local port to listen for UDP packets
 // IPAddress timeServer(162, 159, 200, 123); // pool.ntp.org NTP server
@@ -54,6 +61,8 @@ extern byte packetBuffer[NTP_PACKET_SIZE]; // buffer to hold incoming and outgoi
 
 
 int kostalread();
+void lowPin3();
+void highPin3();
 char* kostalState(int Adress, long val);
 void sqlinsert();
 void setNtpTime();
@@ -61,4 +70,5 @@ void releaseNTP();
 unsigned long sendNTPpacket(const char *address);
 unsigned long parseNtpPacket();
 String getLocaltime();
+void printWifiStatus();
 #endif

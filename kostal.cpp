@@ -1,8 +1,11 @@
 #include "kostal.h"
 
 const int ledPin = LED_BUILTIN;
+//const int ledPinR = D2;
 int ledState = LOW; // ledState used to set the LED
-
+int ledPinR = D2;
+int pinLow = LOW; // ledState used to set the LED
+int pinHigh = HIGH; // ledState used to set the LED
 int kostalread()
 {
   /* for (int i = 0; i < 106; ++i) {
@@ -24,6 +27,8 @@ int kostalread()
   }*/
 
   pinMode(ledPin, OUTPUT);
+  pinMode(ledPinR, OUTPUT);
+  
   if (ledState == LOW)
   {
     ledState = HIGH;
@@ -35,6 +40,7 @@ int kostalread()
 
   // set the LED with the ledState of the variable:
   digitalWrite(ledPin, ledState);
+  
 
   auto now = std::chrono::system_clock::now();
 
@@ -262,3 +268,29 @@ void sqlinsert()
   Serial.println(INSERTSQL);
 }
 
+  void lowPin3(){
+    digitalWrite(ledPinR, pinLow);
+  }
+   void highPin3(){
+    digitalWrite(ledPinR, pinHigh);
+  }
+
+  //Wifi Status
+  //-------
+void printWifiStatus()
+{
+  // print the SSID of the network you're attached to:
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+  // print your board's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
+  Serial.print("IP Address: ");
+  Serial.println(ip);
+  // print the received signal strength:
+  long rssi = WiFi.RSSI();
+  Serial.print("signal strength (RSSI):");
+  Serial.print(rssi);
+  Serial.println(" dBm");
+}

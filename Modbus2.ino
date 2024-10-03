@@ -19,21 +19,24 @@ MySQL_Connection conn((Client *)&client1);
 ModbusTCPClient modbusTCPClient(client);
 IPAddress Modbusserver(192, 168, 0, 87); // update with the IP Address of your Modbus server
 IPAddress server_addr(192, 168, 0, 8);   // IP of the MySQL *server* here
-char user[] = "arduino_user";            // MySQL user login username
-char password[] = "r2d2e2f2";            // MySQL user login password
-char INSERTSQL[500];
+char user[] = SECRET_MYSQLUSER;          // MySQL user login username
+char password[] = SECRET_MYSQLPWD;       // MySQL user login password
+// char INSERTSQL[500];
 constexpr auto timeServer{"pool.ntp.org"};
 const int NTP_PACKET_SIZE = 48; // NTP timestamp is in the first 48 bytes of the message
+int num_fails;
 
 void setup()
 {
-
+  // Ini
+  countSQL = 1;
+  highPin3();
   // Initialize serial and wait for port to open:
   Serial.begin(9600);
-  while (!Serial)
-  {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
+  //while (!Serial)
+  //{
+  //  ; // wait for serial port to connect. Needed for native USB port only
+  //}
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_SHIELD)
   {
@@ -49,17 +52,15 @@ void setup()
     Serial.println(ssid);
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
-
     // wait 3 seconds for connection:
     setNtpTime();
     releaseNTP();
     server.begin(); // Webserver
-
     delay(3000);
   }
   Serial.println("Connected to wifi");
   printWifiStatus();
-
+  // Webserverconnection
   Serial.println("\nStarting connection to wserver...");
   // if you get a connection, report back via serial:
   if (client.connect(wserver, 80))
@@ -92,8 +93,7 @@ void loop()
     char c = client.read();
     Serial.write(c);
   }
-
-  // put your main code here, to run repeatedly:
+  // Modbus connecton
   if (!modbusTCPClient.connected())
   {
     // client not connected, start the Modbus TCP client
@@ -248,7 +248,7 @@ void loop()
     Serial.println("wclient disconnected");
   }
   else
-    Serial.println("NO wclient");
+    Serial.println("NO Webclient");
   // Initiate the query class instance
 
   // Execute the query
@@ -256,46 +256,38 @@ void loop()
   status = conn.connected();
   if (status == TRUE)
   {
-    Serial.println("MySQL_Cursor connected: ");
-    MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
-    sqlinsert();
-    cur_mem->execute(INSERTSQL);
-    delete cur_mem;
+    while (countSQL > 5)
+    {
+      num_fails = 0;
+      Serial.println("MySQL_Cursor connected: ");
+      MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+      sqlinsert();
+      cur_mem->execute(INSERTSQL);
+      delete cur_mem;
+      countSQL=0;
+    }
+    countSQL= ++ countSQL;
   }
   else
   {
+    // Try to reconnect
     conn.close();
-
     delay(1000);
     if (conn.connect(server_addr, 49155, user, password))
     {
-      
       Serial.println("Connection reconecting to mysql.");
-
-      // You would add your code here to run a query once on startup.
+    }
+    num_fails++;
+    Serial.print("num_fails");
+    Serial.println(num_fails);
+    // restart
+    if (num_fails == MAX_FAILED_CONNECTS)
+    {
+      Serial.println("Ok, that's it. I'm outta here. Rebooting...");
+      delay(2000);
+      lowPin3();
     }
   }
 
-  // timeClient.update();
-  // Serial.println(timeClient.getFormattedTime());
-  delay(6000);
-}
-
-//-------
-void printWifiStatus()
-{
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-  // print your board's IP address:
-  IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
-  Serial.print("IP Address: ");
-  Serial.println(ip);
-  // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
+  delay(60000);
 }
