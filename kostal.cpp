@@ -8,7 +8,7 @@ int pinLow = LOW; // ledState used to set the LED
 int pinHigh = HIGH; // ledState used to set the LED
 int kostalread()
 {
-  /* for (int i = 0; i < 106; ++i) {
+   for (int i = 0; i < 106; ++i) {
     Serial.print(globalArray[i].Description);
     if (globalArray[i].Format = 64)
       Serial.print(globalArray[i].fval);
@@ -24,7 +24,7 @@ int kostalread()
     // Serial.print(charArray[0],HEX);
     // Serial.print(charArray[3],HEX);
     // Serial.print(charArray[2],HEX);
-  }*/
+  }
 
   pinMode(ledPin, OUTPUT);
   pinMode(ledPinR, OUTPUT);

@@ -40,6 +40,7 @@ extern WiFiClient client1;
 extern WiFiServer server;
 extern WiFiUDP Udp;
 extern long count, value, value2, val;
+extern int32_t val32;
 extern float floatValue;
 extern char charArray[4];
 extern char ssid[];  // your network SSID (name)

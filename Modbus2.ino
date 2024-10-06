@@ -6,8 +6,11 @@
 
 WiFiClient client;
 WiFiClient client1;
+WiFiClient client2;
+WiFiClient client3;
 WiFiServer server(80);
 long count, value, value2, val;
+int32_t val32;
 float floatValue;
 char charArray[4];
 char ssid[] = SECRET_SSID; // your network SSID (name)
@@ -17,6 +20,8 @@ int status = WL_IDLE_STATUS;
 char wserver[] = "example.com"; // host name for example.com (using DNS)
 MySQL_Connection conn((Client *)&client1);
 ModbusTCPClient modbusTCPClient(client);
+ModbusTCPClient modbusTCPClientKEBA(client2);
+IPAddress ModbusserverKEBA(192, 168, 0, 85); // update with the IP Address of your Modbus server
 IPAddress Modbusserver(192, 168, 0, 87); // update with the IP Address of your Modbus server
 IPAddress server_addr(192, 168, 0, 8);   // IP of the MySQL *server* here
 char user[] = SECRET_MYSQLUSER;          // MySQL user login username
@@ -163,6 +168,63 @@ void loop()
     int ret = kostalread();
     // Serial.println(localtime);
   }
+
+    // Modbus connecton
+  
+  if (!modbusTCPClientKEBA.connected())
+  {
+    // client not connected, start the Modbus TCP client
+    Serial.println("Attempting to connect to Modbus KEBA TCP server");
+    if (!modbusTCPClientKEBA.begin(ModbusserverKEBA, 502))
+    {
+      Serial.println("Modbus TCP Client KEBA failed to connect!");
+    }
+    else
+    {
+      Serial.println("Modbus TCP Client KEBA connected");
+    }
+  }
+  else
+  {
+
+     long read = modbusTCPClientKEBA.requestFrom(255, HOLDING_REGISTERS, 1014,2);
+      if (read == -1)
+      {
+        Serial.print("Failed to requestFrom! ");
+        Serial.println(modbusTCPClientKEBA.lastError());
+      }
+      else
+      {
+        count = modbusTCPClientKEBA.available();
+        value = modbusTCPClientKEBA.read();
+        Serial.print("value1 = modbusTCPClientKEBA.read(); ");
+        Serial.println(value);
+
+        if (count > 1)
+        {
+          value2 = modbusTCPClientKEBA.read();
+          Serial.print("count ");
+          Serial.println(count);
+        Serial.print("value2 = modbusTCPClientKEBA.read(); ");
+        
+        Serial.println(value2);
+        charArray[3] = (value >> 8) & 0xFF; // Das höchstwertige Byte
+        charArray[2] = (value >> 0) & 0xFF;
+        charArray[1] = (value2 >> 8) & 0xFF;
+        charArray[0] = value2 & 0xFF; // Das niederwertige Byte
+          memcpy(&val32, &charArray, sizeof(charArray)); // copy 4 bytes in buf into data variable);
+          Serial.println("val ");
+          Serial.println((u_int8_t)charArray[0]);
+          Serial.println((u_int8_t)charArray[1]);
+          Serial.println((u_int8_t)charArray[2]);
+          Serial.println((u_int8_t)charArray[3]);
+          Serial.println(val32);
+        }
+
+      }
+    
+  }
+
   //-Webserver
   WiFiClient wclient = server.available();
   if (wclient)
@@ -242,7 +304,7 @@ void loop()
       }
     }
     // give the web browser time to receive the data
-    delay(5);
+    delay(50);
     // close the connection:
     wclient.stop();
     Serial.println("wclient disconnected");
@@ -256,7 +318,7 @@ void loop()
   status = conn.connected();
   if (status == TRUE)
   {
-    while (countSQL > 5)
+    while (countSQL > 60)
     {
       num_fails = 0;
       Serial.println("MySQL_Cursor connected: ");
@@ -289,5 +351,5 @@ void loop()
     }
   }
 
-  delay(60000);
+  delay(1000);
 }

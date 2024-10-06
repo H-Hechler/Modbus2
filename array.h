@@ -20,5 +20,6 @@ struct KostalStruct {
 
 };
 extern KostalStruct globalArray[107];
+extern KostalStruct globalArrayKEBA[21];
 
 #endif /* ARRAY_H_ */
