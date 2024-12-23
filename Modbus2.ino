@@ -83,7 +83,7 @@ void setup()
   //  Check server connection
   // Mysql
   Serial.println("Connecting to mysql...");
-  if (conn.connect(server_addr, 49155, user, password))
+  if (conn.connect(server_addr, 32771, user, password))
   {
     delay(1000);
     // You would add your code here to run a query once on startup.
@@ -186,8 +186,10 @@ void loop()
   }
   else
   {
-
-     long read = modbusTCPClientKEBA.requestFrom(255, HOLDING_REGISTERS, 1014,2);
+   for (int k = 0; k < 20; ++k)
+    {
+ 
+     long read = modbusTCPClientKEBA.requestFrom(255, HOLDING_REGISTERS, globalArrayKEBA[k].Adresse, globalArrayKEBA[k].N1);
       if (read == -1)
       {
         Serial.print("Failed to requestFrom! ");
@@ -197,32 +199,34 @@ void loop()
       {
         count = modbusTCPClientKEBA.available();
         value = modbusTCPClientKEBA.read();
-        Serial.print("value1 = modbusTCPClientKEBA.read(); ");
-        Serial.println(value);
+        //Serial.print("value1 = modbusTCPClientKEBA.read(); ");
+        //Serial.println(value);
 
         if (count > 1)
         {
-          value2 = modbusTCPClientKEBA.read();
-          Serial.print("count ");
-          Serial.println(count);
-        Serial.print("value2 = modbusTCPClientKEBA.read(); ");
+        value2 = modbusTCPClientKEBA.read();
+        //Serial.print("count ");
+        //Serial.println(count);
+        //Serial.print("value2 = modbusTCPClientKEBA.read(); ");
         
-        Serial.println(value2);
+        //Serial.println(value2);
         charArray[3] = (value >> 8) & 0xFF; // Das höchstwertige Byte
         charArray[2] = (value >> 0) & 0xFF;
         charArray[1] = (value2 >> 8) & 0xFF;
         charArray[0] = value2 & 0xFF; // Das niederwertige Byte
-          memcpy(&val32, &charArray, sizeof(charArray)); // copy 4 bytes in buf into data variable);
-          Serial.println("val ");
-          Serial.println((u_int8_t)charArray[0]);
-          Serial.println((u_int8_t)charArray[1]);
-          Serial.println((u_int8_t)charArray[2]);
-          Serial.println((u_int8_t)charArray[3]);
-          Serial.println(val32);
+        memcpy(&val32, &charArray, sizeof(charArray)); // copy 4 bytes in buf into data variable);
+        globalArrayKEBA[k].ival = val32;
+        /*Serial.println("val ");
+        Serial.println((u_int8_t)charArray[0]);
+        Serial.println((u_int8_t)charArray[1]);
+        Serial.println((u_int8_t)charArray[2]);
+        Serial.println((u_int8_t)charArray[3]);
+        Serial.println(val32);*/
         }
 
       }
-    
+    }
+    int ret = kebaread();
   }
 
   //-Webserver
@@ -335,7 +339,7 @@ void loop()
     // Try to reconnect
     conn.close();
     delay(1000);
-    if (conn.connect(server_addr, 49155, user, password))
+    if (conn.connect(server_addr, 32771, user, password))
     {
       Serial.println("Connection reconecting to mysql.");
     }

@@ -62,6 +62,7 @@ extern byte packetBuffer[NTP_PACKET_SIZE]; // buffer to hold incoming and outgoi
 
 
 int kostalread();
+int kebaread();
 void lowPin3();
 void highPin3();
 char* kostalState(int Adress, long val);

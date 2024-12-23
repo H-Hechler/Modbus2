@@ -26,6 +26,7 @@ int kostalread()
     // Serial.print(charArray[2],HEX);
   }
 
+
   pinMode(ledPin, OUTPUT);
   pinMode(ledPinR, OUTPUT);
   
@@ -274,7 +275,23 @@ void sqlinsert()
    void highPin3(){
     digitalWrite(ledPinR, pinHigh);
   }
+int kebaread()
+{
+   for (int i = 0; i < 20; ++i) {
+    Serial.print(globalArrayKEBA[i].Description);
+    Serial.print(globalArrayKEBA[i].ival);
+    Serial.println(globalArrayKEBA[i].Unit);
+    // Serial.println(val);
+    // Serial.print(value);
 
+    // Serial.print("+++");
+    // Serial.println(value2);
+    // Serial.print(charArray[1],HEX);
+    // Serial.print(charArray[0],HEX);
+    // Serial.print(charArray[3],HEX);
+    // Serial.print(charArray[2],HEX);
+  }
+}
   //Wifi Status
   //-------
 void printWifiStatus()
