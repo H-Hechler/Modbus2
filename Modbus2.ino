@@ -83,7 +83,7 @@ void setup()
   //  Check server connection
   // Mysql
   Serial.println("Connecting to mysql...");
-  if (conn.connect(server_addr, 32771, user, password))
+  if (conn.connect(server_addr, 32773, user, password))
   {
     delay(1000);
     // You would add your code here to run a query once on startup.
@@ -326,10 +326,15 @@ void loop()
     {
       num_fails = 0;
       Serial.println("MySQL_Cursor connected: ");
-      MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
-      sqlinsert();
-      cur_mem->execute(INSERTSQL);
-      delete cur_mem;
+     // MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+    //  sqlinsert();
+      
+    //  cur_mem->execute(INSERTSQL);
+   //   delete cur_mem;
+      MySQL_Cursor *cur_memKeba = new MySQL_Cursor(&conn);
+      sqlinsertKeba();
+      cur_memKeba->execute(INSERTSQLKEBA);
+      delete cur_memKeba;
       countSQL=0;
     }
     countSQL= ++ countSQL;
@@ -339,7 +344,7 @@ void loop()
     // Try to reconnect
     conn.close();
     delay(1000);
-    if (conn.connect(server_addr, 32771, user, password))
+    if (conn.connect(server_addr, 32773, user, password))
     {
       Serial.println("Connection reconecting to mysql.");
     }

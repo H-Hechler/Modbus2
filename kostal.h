@@ -49,6 +49,7 @@ extern int keyIndex;
 extern int status;
 extern char wserver[];  // host name for example.com (using DNS)
 EXTERN char INSERTSQL[500] ;
+EXTERN char INSERTSQLKEBA[500] ;
 EXTERN int countSQL;
 
 
@@ -67,6 +68,7 @@ void lowPin3();
 void highPin3();
 char* kostalState(int Adress, long val);
 void sqlinsert();
+void sqlinsertKeba();
 void setNtpTime();
 void releaseNTP();
 unsigned long sendNTPpacket(const char *address);

@@ -253,7 +253,8 @@ char *kostalState(int Adress, long val)
 
 void sqlinsert()
 {
-  strcpy(INSERTSQL, "INSERT INTO Kostal.kostal (Total_DC_power,Home_own_consumption_from_grid,Total_home_consumption_Grid,Total_home_consumption_PV,Home_own_consumption_from_PV,Total_home_consumption) VALUES(");
+  strcpy(INSERTSQL, "INSERT INTO Kostal.kostal (Total_DC_power,Home_own_consumption_from_grid,Total_home_consumption_Grid,\
+  Total_home_consumption_PV,Home_own_consumption_from_PV,Total_home_consumption) VALUES(");
   strcat(INSERTSQL, globalArray[7].sVal);
   strcat(INSERTSQL, ",");
   strcat(INSERTSQL, globalArray[10].sVal);
@@ -268,6 +269,58 @@ void sqlinsert()
   strcat(INSERTSQL, ")");
   Serial.println(INSERTSQL);
 }
+void sqlinsertKeba()
+{
+  strcpy(INSERTSQLKEBA, "INSERT INTO Kostal.Keba (Charging_state,Cable_state,Error_code,\
+  Charging_current_phase_1,Charging_current_phase_2,Charging_current_phase_3,\
+  Serial_number,Product_type_and_features,Firmware_version,Active power,\
+  Total_energy,Voltage_phase_1,Voltage_phase_2,Voltage_phase_3,\
+  Power_factor,Max_charging_current,Max_supported_current,RFID_card,\
+  Charged_energy,Phase_switching_source,Phase_switching_state) VALUES(");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[0].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[1].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[2].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[3].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[4].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[5].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[6].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[7].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[8].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[9].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[10].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[11].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[12].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[13].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[14].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[15].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[16].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[17].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[18].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[19].sVal);
+  strcat(INSERTSQLKEBA, ",");
+  strcat(INSERTSQLKEBA, globalArrayKEBA[20].sVal);
+  strcat(INSERTSQLKEBA, ")");
+  Serial.println(INSERTSQLKEBA);
+}
 
   void lowPin3(){
     digitalWrite(ledPinR, pinLow);
@@ -279,6 +332,7 @@ int kebaread()
 {
    for (int i = 0; i < 20; ++i) {
     Serial.print(globalArrayKEBA[i].Description);
+    Serial.print(" : ");
     Serial.print(globalArrayKEBA[i].ival);
     Serial.println(globalArrayKEBA[i].Unit);
     // Serial.println(val);
