@@ -1,4 +1,51 @@
 //********************** Projekt-Includes ******************************
+
+/**
+ * Main loop function that handles Modbus TCP client connections, data reading, and web server responses.
+ * 
+ * The function performs the following tasks:
+ * 1. Reads data from the client and writes it to the Serial.
+ * 2. Manages the connection to the Modbus TCP server and reads data from it.
+ * 3. Processes the data read from the Modbus TCP server and updates the global array.
+ * 4. Manages the connection to the Modbus KEBA TCP server and reads data from it.
+ * 5. Processes the data read from the Modbus KEBA TCP server and updates the global array.
+ * 6. Handles incoming HTTP requests from the web client and sends an HTML response.
+ * 7. Manages the connection to the MySQL database and inserts data into it.
+ * 
+ * The function uses the following global variables:
+ * - client: WiFi client for Modbus TCP connection.
+ * - modbusTCPClient: Modbus TCP client instance.
+ * - Modbusserver: IP address of the Modbus server.
+ * - globalArray: Array of structures holding Modbus data.
+ * - modbusTCPClientKEBA: Modbus TCP client instance for KEBA.
+ * - ModbusserverKEBA: IP address of the KEBA Modbus server.
+ * - globalArrayKEBA: Array of structures holding KEBA Modbus data.
+ * - server: WiFi server instance for handling HTTP requests.
+ * - conn: MySQL connection instance.
+ * - server_addr: IP address of the MySQL server.
+ * - user: MySQL username.
+ * - password: MySQL password.
+ * - INSERTSQL: SQL query string for inserting data.
+ * - INSERTSQLKEBA: SQL query string for inserting KEBA data.
+ * - countSQL: Counter for SQL insert operations.
+ * - num_fails: Counter for failed MySQL connection attempts.
+ * - MAX_FAILED_CONNECTS: Maximum number of allowed failed MySQL connection attempts.
+ * - charArray: Array for storing bytes read from Modbus.
+ * - floatValue: Float value converted from charArray.
+ * - val: Integer value converted from charArray.
+ * - val32: 32-bit integer value converted from charArray.
+ * - count: Number of bytes available to read from Modbus.
+ * - value: Value read from Modbus.
+ * - value2: Second value read from Modbus (if available).
+ * 
+ * The function also includes several helper functions:
+ * - kostalState: Function to get the state description based on address and value.
+ * - kostalread: Function to read data from the Kostal device.
+ * - kebaread: Function to read data from the KEBA device.
+ * - sqlinsert: Function to insert data into the MySQL database.
+ * - sqlinsertKeba: Function to insert KEBA data into the MySQL database.
+ * - lowPin3: Function to perform a low-level reset.
+ */
 #define MAIN
 #include "kostal.h"
 
@@ -91,6 +138,7 @@ void setup()
   else
     Serial.println("Connection failed to mysql.");
 }
+
 void loop()
 {
   while (client.available())
@@ -142,12 +190,12 @@ void loop()
           globalArray[i].fval = floatValue;
           snprintf(globalArray[i].sVal, sizeof(globalArray[i].sVal), "%f", floatValue);
         }
-        else if (globalArray[i].Format == 16 & count == 1)
+        else if (globalArray[i].Format == 16 && count == 1)
         {
           globalArray[i].ival = value;
           snprintf(globalArray[i].sVal, sizeof(globalArray[i].sVal), "%i", value);
         }
-        else if (globalArray[i].Format == 16 & count == 2)
+        else if (globalArray[i].Format == 16 && count == 2)
         {
           charArray[1] = (value >> 8) & 0xFF; // Das höchstwertige Byte
           charArray[0] = (value >> 0) & 0xFF;
@@ -186,7 +234,7 @@ void loop()
   }
   else
   {
-   for (int k = 0; k < 20; ++k)
+   for (int k = 0; k < 21; ++k)
     {
  
      long read = modbusTCPClientKEBA.requestFrom(255, HOLDING_REGISTERS, globalArrayKEBA[k].Adresse, globalArrayKEBA[k].N1);
@@ -216,12 +264,35 @@ void loop()
         charArray[0] = value2 & 0xFF; // Das niederwertige Byte
         memcpy(&val32, &charArray, sizeof(charArray)); // copy 4 bytes in buf into data variable);
         globalArrayKEBA[k].ival = val32;
+        globalArrayKEBA[k].fval = (float)val32;
+        Serial.println("val FLoat");
+        Serial.println(globalArrayKEBA[k].fval);
         /*Serial.println("val ");
         Serial.println((u_int8_t)charArray[0]);
         Serial.println((u_int8_t)charArray[1]);
         Serial.println((u_int8_t)charArray[2]);
         Serial.println((u_int8_t)charArray[3]);
         Serial.println(val32);*/
+
+        switch (k) {
+          case 3:
+          case 4:
+          case 5:
+          case 9:
+          case 15:
+          case 16:
+            snprintf(globalArrayKEBA[k].sVal, sizeof(globalArrayKEBA[k].sVal), "%f",globalArrayKEBA[k].fval/1000.0);
+            break;
+          case 10:
+          case 18:
+            snprintf(globalArrayKEBA[k].sVal, sizeof(globalArrayKEBA[k].sVal), "%f",globalArrayKEBA[k].fval/10.0);
+
+          break;
+          default:
+            snprintf(globalArrayKEBA[k].sVal, sizeof(globalArrayKEBA[k].sVal), "%i", val32);
+            break;
+        }
+        
         }
 
       }
@@ -322,7 +393,7 @@ void loop()
   status = conn.connected();
   if (status == TRUE)
   {
-    while (countSQL > 60)
+    while (countSQL > 6)
     {
       num_fails = 0;
       Serial.println("MySQL_Cursor connected: ");

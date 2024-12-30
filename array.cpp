@@ -119,22 +119,22 @@ KostalStruct globalArrayKEBA[21] =
 {1000,"Charging state"," -",16,2,1},
 {1004,"Cable state"," -",16,2,1},
 {1006,"Error code"," -",16,2,1},
-{1008,"Charging current phase 1"," mA",16,2,1},
+{1008,"Charging current phase 1"," mA",16,2,1},//3
 {1010,"Charging current phase 2"," mA",16,2,1},
 {1012,"Charging current phase 3"," mA",16,2,1},
 {1014,"Serial number"," -",16,2,1},
 {1016,"Product type and features"," -",16,2,1},
 {1018,"Firmware version"," -",16,2,1},
-{1020,"Active power"," mW",16,2,1},
-{1036,"Total energy"," W/10",16,2,1},
+{1020,"Active power"," mW",16,2,1},//9
+{1036,"Total energy"," W/10",16,2,1},//10
 {1040,"Voltage phase 1"," V",16,2,1},
 {1042,"Voltage phase 2"," V",16,2,1},
 {1044,"Voltage phase 3"," V",16,2,1},
 {1046,"Power factor"," -",16,2,1},
-{1100,"Max charging current"," mA",16,2,1},
-{1110,"Max supported current"," mA",16,2,1},
+{1100,"Max charging current"," mA",16,2,1},//15
+{1110,"Max supported current"," mA",16,2,1},//16
 {1500,"RFID card"," -",16,2,1},
-{1502,"Charged energy"," Wh/10",16,2,1},
+{1502,"Charged energy"," Wh/10",16,2,1},//18
 {1550,"Phase switching source"," -",16,2,1},
 {1552,"Phase switching state"," -",16,2,1}
 

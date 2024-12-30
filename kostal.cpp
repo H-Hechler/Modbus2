@@ -273,7 +273,7 @@ void sqlinsertKeba()
 {
   strcpy(INSERTSQLKEBA, "INSERT INTO Kostal.Keba (Charging_state,Cable_state,Error_code,\
   Charging_current_phase_1,Charging_current_phase_2,Charging_current_phase_3,\
-  Serial_number,Product_type_and_features,Firmware_version,Active power,\
+  Serial_number,Product_type_and_features,Firmware_version,Active_power,\
   Total_energy,Voltage_phase_1,Voltage_phase_2,Voltage_phase_3,\
   Power_factor,Max_charging_current,Max_supported_current,RFID_card,\
   Charged_energy,Phase_switching_source,Phase_switching_state) VALUES(");
