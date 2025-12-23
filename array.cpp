@@ -130,7 +130,7 @@ KostalStruct globalArrayKEBA[21] =
 {1040,"Voltage phase 1"," V",16,2,1},
 {1042,"Voltage phase 2"," V",16,2,1},
 {1044,"Voltage phase 3"," V",16,2,1},
-{1046,"Power factor"," -",16,2,1},
+{1046,"Power factor"," -",16,2,1},//14
 {1100,"Max charging current"," mA",16,2,1},//15
 {1110,"Max supported current"," mA",16,2,1},//16
 {1500,"RFID card"," -",16,2,1},

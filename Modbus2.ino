@@ -70,7 +70,7 @@ ModbusTCPClient modbusTCPClient(client);
 ModbusTCPClient modbusTCPClientKEBA(client2);
 IPAddress ModbusserverKEBA(192, 168, 0, 85); // update with the IP Address of your Modbus server
 IPAddress Modbusserver(192, 168, 0, 87); // update with the IP Address of your Modbus server
-IPAddress server_addr(192, 168, 0, 8);   // IP of the MySQL *server* here
+IPAddress server_addr(192, 168, 0, 10);   // IP of the MySQL *server* here
 char user[] = SECRET_MYSQLUSER;          // MySQL user login username
 char password[] = SECRET_MYSQLPWD;       // MySQL user login password
 // char INSERTSQL[500];
@@ -85,10 +85,10 @@ void setup()
   highPin3();
   // Initialize serial and wait for port to open:
   Serial.begin(9600);
-  while (!Serial)
-  {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
+  //while (!Serial)
+ // {
+ //   ; // wait for serial port to connect. Needed for native USB port only
+ // }
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_SHIELD)
   {
@@ -130,7 +130,7 @@ void setup()
   //  Check server connection
   // Mysql
   Serial.println("Connecting to mysql...");
-  if (conn.connect(server_addr, 32773, user, password))
+  if (conn.connect(server_addr, 3306, user, password))
   {
     delay(1000);
     // You would add your code here to run a query once on startup.
@@ -213,7 +213,7 @@ void loop()
         }
       }
     }
-    int ret = kostalread();
+    //int ret = kostalread();
     // Serial.println(localtime);
   }
 
@@ -280,13 +280,17 @@ void loop()
           case 5:
           case 9:
           case 15:
-          case 16:
+         // case 16:
             snprintf(globalArrayKEBA[k].sVal, sizeof(globalArrayKEBA[k].sVal), "%f",globalArrayKEBA[k].fval/1000.0);
             break;
-          case 10:
+         // case 10:
+         // snprintf(globalArrayKEBA[k].sVal, sizeof(globalArrayKEBA[k].sVal), "%f",globalArrayKEBA[k].fval/10.0);
+         //   break;
+          case 14:
           case 18:
             snprintf(globalArrayKEBA[k].sVal, sizeof(globalArrayKEBA[k].sVal), "%f",globalArrayKEBA[k].fval/10.0);
-
+            Serial.println("case 18");
+            Serial.println(globalArrayKEBA[k].sVal);
           break;
           default:
             snprintf(globalArrayKEBA[k].sVal, sizeof(globalArrayKEBA[k].sVal), "%i", val32);
@@ -297,7 +301,7 @@ void loop()
 
       }
     }
-    int ret = kebaread();
+    //int ret = kebaread();
   }
 
   //-Webserver
@@ -391,31 +395,30 @@ void loop()
   // Execute the query
   bool status;
   status = conn.connected();
-  if (status == TRUE)
+  if (status == true)
   {
-    while (countSQL > 6)
+    while (countSQL > 60)
     {
       num_fails = 0;
       Serial.println("MySQL_Cursor connected: ");
-     // MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
-    //  sqlinsert();
-      
-    //  cur_mem->execute(INSERTSQL);
-   //   delete cur_mem;
-      MySQL_Cursor *cur_memKeba = new MySQL_Cursor(&conn);
-      sqlinsertKeba();
-      cur_memKeba->execute(INSERTSQLKEBA);
-      delete cur_memKeba;
+      MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+      sqlinsert();
+      cur_mem->execute(INSERTSQL);
+      delete cur_mem;
+     // MySQL_Cursor *cur_memKeba = new MySQL_Cursor(&conn);
+     // sqlinsertKeba();
+     // cur_memKeba->execute(INSERTSQLKEBA);
+     // delete cur_memKeba;
       countSQL=0;
     }
-    countSQL= ++ countSQL;
+    countSQL++;
   }
   else
   {
     // Try to reconnect
     conn.close();
     delay(1000);
-    if (conn.connect(server_addr, 32773, user, password))
+    if (conn.connect(server_addr, 3306, user, password))
     {
       Serial.println("Connection reconecting to mysql.");
     }
